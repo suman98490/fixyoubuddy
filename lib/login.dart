@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.all(5.0),
                   height: screenheight * (1/2),
                   width: screenwidth,
-                  color: Color(0xFF244E9E),
+                  color: Color(0xFF000080),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -114,7 +114,7 @@ class _LoginState extends State<Login> {
                           }:null,
                           child: Text("Submit",
                             style: GoogleFonts.lato(color: issubmitenabled ? Colors.white : Colors.black,fontSize:20, fontWeight: issubmitenabled ? FontWeight.bold : FontWeight.normal),),
-                          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF244E9E),
+                          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF000080),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5)
                               ))

@@ -37,6 +37,7 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.6
   shared_preferences: ^2.5.3
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,11 @@ flutter:
     - assets/ac.png
     - assets/washingmachine.png
     - assets/acanimated.gif
+    - assets/fan.png
+    - assets/acrepair.png
+    - assets/transport.png
+    - assets/catering.png
+    - assets/user.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

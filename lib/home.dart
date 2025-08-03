@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobileapp/widgets/carouselbanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +21,18 @@ class _HomeState extends State<Home> {
      {"categoryName":"Plumbing","icon":"plumber"},
      {"categoryName":"Air Conditioning","icon":"ac"},
      {"categoryName":"Washing Machine","icon":"washingmachine"},
+   ];
+   var mostPopular=[
+     {"categoryName":"Fan Repair","icon":"fan"},
+     {"categoryName":"AC Install","icon":"acrepair"},
+     {"categoryName":"Transport","icon":"transport"},
+     {"categoryName":"Catering","icon":"catering"},
+   ];
+   var topRated=[
+     {"categoryName":"Suman","icon":"user"},
+     {"categoryName":"Ayub","icon":"user"},
+     {"categoryName":"Munendra","icon":"user"},
+     {"categoryName":"Ramesh","icon":"user"},
    ];
 
   @override
@@ -85,7 +99,7 @@ class _HomeState extends State<Home> {
           children: [
             Flexible(
               child: Text(cardText,
-                  style: GoogleFonts.lexend(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),),
+                  style: GoogleFonts.lexend(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold)),
             ),
             ElevatedButton(
                 onPressed: ()=>{},
@@ -148,7 +162,6 @@ class _HomeState extends State<Home> {
                   children: List.generate(categoryList.length,(index){
                     return  categoryCard(screenHeight, screenWidth,categoryList[index]["categoryName"]!,categoryList[index]["icon"]!);
                   })
-
               ),
               SizedBox(height: 10),
               Row(
@@ -158,6 +171,87 @@ class _HomeState extends State<Home> {
                   SizedBox(width: 10),
                   Icon(Icons.arrow_drop_down)
                 ],
+              ),
+              Carouselbanner(),
+              Container(
+                padding: EdgeInsets.all(5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Most Popular", style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold),),
+                    Text("View All", style: GoogleFonts.lato(fontWeight: FontWeight.normal, fontSize: 20),)
+                  ],
+                ),
+              ),
+              Container(
+                height: screenHeight/7,
+                width: screenWidth,
+                padding: EdgeInsets.all(5.0),
+                child:  GridView.count(
+                  crossAxisCount: 4,
+                  children: List.generate(4, (index){
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.transparent
+                              ),
+                              child: Center(
+                                child: Image.asset('assets/${mostPopular  [index]["icon"]}.png',
+                                    fit: BoxFit.cover),
+                              )
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Flexible(child:  Text("${mostPopular[index]["categoryName"]}",
+                          style: GoogleFonts.lato(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
+                      ],
+                    );
+                  }),
+                )
+              ),
+              Container(
+                padding: EdgeInsets.all(5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Top Technicians", style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold),),
+                    Text("View All", style: GoogleFonts.lato(fontWeight: FontWeight.normal, fontSize: 20),)
+                  ],
+                ),
+              ),
+              Container(
+                  height: screenHeight/7,
+                  width: screenWidth,
+                  padding: EdgeInsets.all(5.0),
+                  child:  GridView.count(
+                    crossAxisCount: 4,
+                    children: List.generate(4, (index){
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: Colors.transparent
+                                ),
+                                child: Center(
+                                  child: Image.asset('assets/${topRated[index]["icon"]}.png',
+                                      fit: BoxFit.cover),
+                                )
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Flexible(child:  Text("${topRated[index]["categoryName"]}",
+                            style: GoogleFonts.lato(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
+                        ],
+                      );
+                    }),
+                  )
               ),
               GridView.count(
                 crossAxisCount: 2,
@@ -171,6 +265,21 @@ class _HomeState extends State<Home> {
               ]
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: ()=>{},
+        backgroundColor: Color(0xFF000080),
+        shape: CircleBorder(),
+        child: Icon(Icons.home,color: Colors.white, size: 40),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white70,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.menu,color: Color(0xFF000080)),label: "Menu"),
+            BottomNavigationBarItem(icon: Icon(Icons.add_alert, color: Color(0xFF000080)),label: "Notifications")
+          ],
+        selectedItemColor: Color(0xFF000080),
+        unselectedItemColor: Color(0xFF000080),
       )
     );
   }
