@@ -12,32 +12,29 @@ class Carouselbanner extends StatefulWidget {
 class _CarouselbannerState extends State<Carouselbanner> {
 
 
-  Padding carouselBanner(double screenwidth, Color colorName, String bannerHeading, String bannerContent){
-    return Padding(
-      padding: EdgeInsets.all(5.0),
-      child: Container(
-        width: screenwidth,
-        child: Card(
-          color: colorName,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Text(bannerHeading,
-                  style: GoogleFonts.lexend(fontSize: 18,fontWeight: FontWeight.normal, color: Colors.white),textAlign: TextAlign.center,),
-              ),
-              SizedBox(height: 10),
-              Flexible(
-                child: Text(bannerContent,
-                  style: GoogleFonts.lexend(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
-              ),
-              SizedBox(height: 10),
-              Flexible(
-                child: Text("Tap here to Know more",
-                  style: GoogleFonts.lexend(fontSize: 15,fontWeight: FontWeight.normal, color: Colors.white70),),
-              )
-            ],
-          ),
+  Container carouselBanner(double screenwidth, Color colorName, String bannerHeading, String bannerContent){
+    return Container(
+      width: screenwidth,
+      child: Card(
+        color: colorName,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(bannerHeading,
+                style: GoogleFonts.lexend(fontSize: 18,fontWeight: FontWeight.normal, color: Colors.white),textAlign: TextAlign.center,),
+            ),
+            SizedBox(height: 10),
+            Flexible(
+              child: Text(bannerContent,
+                style: GoogleFonts.lexend(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
+            ),
+            SizedBox(height: 10),
+            Flexible(
+              child: Text("Tap here to Know more",
+                style: GoogleFonts.lexend(fontSize: 15,fontWeight: FontWeight.normal, color: Colors.white70),),
+            )
+          ],
         ),
       ),
     );

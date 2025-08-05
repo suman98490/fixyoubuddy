@@ -38,6 +38,9 @@ dependencies:
   flutter_native_splash: ^2.4.6
   shared_preferences: ^2.5.3
   carousel_slider: ^5.1.1
+  firebase_core: ^2.0.0
+  firebase_storage: ^11.0.0
+  shimmer_animation: ^2.2.2
 
 dev_dependencies:
   flutter_test:

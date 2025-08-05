@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobileapp/login.dart';
+import 'package:mobileapp/subcategories.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
@@ -32,7 +33,8 @@ class _MyAppState extends State<MyApp> {
       home: const SplashScreen(),
       routes: {
         '/home' : (context) => Home(),
-        '/login' : (context) => Login(title: 'Flutter Home Page')
+        '/login' : (context) => Login(title: 'Flutter Home Page'),
+        '/subcategories' : (context) => SubCategories()
       },
     );
   }

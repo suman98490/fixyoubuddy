@@ -109,7 +109,7 @@ class _LoginState extends State<Login> {
                           onPressed :  issubmitenabled ? () async {
                             final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
                             sharedpreferences.setString('MobileNumber', mobilenumber.text);
-                            Navigator.pushNamed(context, '/home',
+                            Navigator.pushReplacementNamed(context, '/home',
                             arguments:  {'MobileNumber' : mobilenumber.text});
                           }:null,
                           child: Text("Submit",

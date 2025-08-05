@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,33 +17,41 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
    var  MobileNumber;
-   var categoryList=[
-     {"categoryName":"Electrician","icon":"electrician"},
-     {"categoryName":"Plumbing","icon":"plumber"},
-     {"categoryName":"Air Conditioning","icon":"ac"},
-     {"categoryName":"Washing Machine","icon":"washingmachine"},
+   bool isappLoaded = false;
+   List<dynamic> categoryList=[];
+   Map<String, dynamic> subCategories = {};
+   var categoryList1=[
+     {"name":"Home Services","image_url":"https://cdn-icons-png.flaticon.com/128/10364/10364864.png"},
+     {"name":"Cool Services","image_url":"https://cdn-icons-png.flaticon.com/128/9047/9047865.png"},
+     {"name":"Health Services","image_url":"https://cdn-icons-png.flaticon.com/128/4326/4326328.png"},
    ];
    var mostPopular=[
-     {"categoryName":"Fan Repair","icon":"fan"},
-     {"categoryName":"AC Install","icon":"acrepair"},
-     {"categoryName":"Transport","icon":"transport"},
-     {"categoryName":"Catering","icon":"catering"},
+     {"name":"Fan Repair","icon":"fan"},
+     {"name":"AC Install","icon":"acrepair"},
+     {"name":"Transport","icon":"transport"},
+     {"name":"Catering Services","icon":"catering"},
    ];
    var topRated=[
-     {"categoryName":"Suman","icon":"user"},
-     {"categoryName":"Ayub","icon":"user"},
-     {"categoryName":"Munendra","icon":"user"},
-     {"categoryName":"Ramesh","icon":"user"},
+     {"name":"Suman","icon":"user"},
+     {"name":"Ayub","icon":"user"},
+     {"name":"Munendra","icon":"user"},
+     {"name":"Ramesh","icon":"user"},
    ];
 
   @override
+  /* Initial Function which will be called */
   void initState(){
     super.initState();
     getCategories();
+    setState(() {
+      isappLoaded = true;
+    });
   }
+  /* Not Referred initialization any where. just kept this for reference*/
   void initiaization() async{
     await Future.delayed(Duration(seconds: 5));
   }
+   /* Get Mobile Number from Cache*/
   Future getMobileNumber() async{
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     var obtainedvalue =  sharedpreferences.getString('MobileNumber');
@@ -50,38 +59,65 @@ class _HomeState extends State<Home> {
       MobileNumber = obtainedvalue;
     });
   }
+   /* Call Get Categories API. Screen will be loaded after this API call*/
   Future getCategories() async{
     final getCategories = await get(Uri.parse('https://fixubuddy-api-978338023784.asia-south1.run.app/categories/'));
     final categories = getCategories.body;
     print("categories are");
-    print(categories);
+    setState(() {
+    categoryList = jsonDecode(categories);
+    });
   }
 
-   Card categoryCard(double screenHeight, double screenWidth, String cardName, String imageName){
+   Future getSubCategories(int index) async{
+     final getSubCategories = await get(Uri.parse("https://fixubuddy-api-978338023784.asia-south1.run.app/categories/$index")) ;
+     final getSubCategoriesResponse = getSubCategories.body;
+     print(getSubCategoriesResponse);
+     setState(() {
+       subCategories = jsonDecode(getSubCategoriesResponse);
+     });
+   }
+
+   Card categoryCard(double screenHeight, double screenWidth, String cardName, String imageName, int index){
      return  Card(
          color: Colors.white70,
-         child: Container(
-           height: screenHeight/8,
-           width: screenWidth/2,
-           child: Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-               Padding(
-                 padding: EdgeInsets.all(5.0),
-                 child: Text(cardName,
-                   style:  GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.normal),),
-               ),
-               Flexible(
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.end,
-                   crossAxisAlignment: CrossAxisAlignment.end,
-                   children: [
-                     Flexible(child:  Image.asset("assets/$imageName.png",
-                         height: 80,width: 80, alignment: Alignment.bottomRight))
-                   ],
+         child: InkWell(
+           onTap: () async =>{
+            getSubCategories(index).whenComplete(
+                () async{
+                  if(subCategories != null){
+                    print("you are in get subcategories");
+                  print(subCategories["sub_categories"]);
+                  Navigator.pushNamed(context,'/subcategories',
+                  arguments: subCategories["sub_categories"]);
+                  }
+
+                }
+            ),
+           },
+           child: Container(
+             height: screenHeight/8,
+             width: screenWidth/2,
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Padding(
+                   padding: EdgeInsets.all(5.0),
+                   child: Text("$cardName",
+                     style:  GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.normal),),
                  ),
-               )
-             ],
+                 Flexible(
+                   child: Row(
+                     mainAxisAlignment: MainAxisAlignment.end,
+                     crossAxisAlignment: CrossAxisAlignment.end,
+                     children: [
+                       Flexible(child:  Image.network("$imageName",
+                           height: 80,width: 80, alignment: Alignment.bottomRight)),
+                     ],
+                   ),
+                 )
+               ],
+             ),
            ),
          )
      );
@@ -117,8 +153,58 @@ class _HomeState extends State<Home> {
       ),
     );
    }
+   Container fourIconCardWidget(double screenHeight, double screenWidth, var arrayName, String widgetName){
+    return Container(
+        height: screenHeight/6,
+        width: screenWidth,
+        child:  Card(
+          color: Colors.white70,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(widgetName, style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.bold),),
+                      Text("View All", style: GoogleFonts.lato(fontWeight: FontWeight.normal, fontSize: 18),)
+                    ],
+                  ),
+                ),
+              ),
+              Flexible(
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  physics: NeverScrollableScrollPhysics(),
+                  childAspectRatio: 2,
+                  children: List.generate(4, (index){
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Image.asset('assets/${arrayName[index]["icon"]}.png',
+                              fit: BoxFit.cover,
+                        ),
+                        ),
+                        Expanded(
+                          child: Text("${arrayName[index]["name"]}",
+                            style: GoogleFonts.lato(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.center,
 
-  @override
+                          ),
+                        )
+                      ],
+                    );
+                  }),
+                ),
+              )
+            ],
+          ),
+        )
+    );
+    }
+   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -145,124 +231,71 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.logout, color: Colors.white),),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(5.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Good Morning Suman",
-              style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xFF000080)),),
-              //servicesCardRow(screenHeight, screenWidth,"Electrician","Plumbing","electrician","plumber"),
-             // servicesCardRow(screenHeight, screenWidth,"Air Conditioning","Washing Machine","ac","washingmachine"),
-              GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  childAspectRatio: 2,
-                  children: List.generate(categoryList.length,(index){
-                    return  categoryCard(screenHeight, screenWidth,categoryList[index]["categoryName"]!,categoryList[index]["icon"]!);
-                  })
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("View All", style: GoogleFonts.lato(fontSize: 18),),
-                  SizedBox(width: 10),
-                  Icon(Icons.arrow_drop_down)
-                ],
-              ),
-              Carouselbanner(),
-              Container(
-                padding: EdgeInsets.all(5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Most Popular", style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold),),
-                    Text("View All", style: GoogleFonts.lato(fontWeight: FontWeight.normal, fontSize: 20),)
-                  ],
-                ),
-              ),
-              Container(
-                height: screenHeight/7,
-                width: screenWidth,
-                padding: EdgeInsets.all(5.0),
-                child:  GridView.count(
-                  crossAxisCount: 4,
-                  children: List.generate(4, (index){
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(5.0),
+            child: Column(
+              children: [
+                categoryList.isNotEmpty ? Visibility(
+                  visible: isappLoaded,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.transparent
-                              ),
-                              child: Center(
-                                child: Image.asset('assets/${mostPopular  [index]["icon"]}.png',
-                                    fit: BoxFit.cover),
-                              )
+                        Text("Good Morning Suman",
+                          style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xFF000080)),),
+                        //servicesCardRow(screenHeight, screenWidth,"Electrician","Plumbing","electrician","plumber"),
+                        // servicesCardRow(screenHeight, screenWidth,"Air Conditioning","Washing Machine","ac","washingmachine"),
+                        GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            childAspectRatio: 2,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: List.generate(4,(index){
+                              return  categoryCard(screenHeight, screenWidth,"${categoryList[index]["name"]}","${categoryList[index]["image_url"]}",categoryList[index]["id"]);
+                            })
+                        ),
+                        SizedBox(height: 10),
+                        Visibility(
+                          visible: categoryList.length >
+                              4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("View All", style: GoogleFonts.lato(fontSize: 18),),
+                              SizedBox(width: 10),
+                              Icon(Icons.arrow_drop_down)
+                            ],
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Flexible(child:  Text("${mostPopular[index]["categoryName"]}",
-                          style: GoogleFonts.lato(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
-                      ],
-                    );
-                  }),
+                        Carouselbanner(),
+                        fourIconCardWidget(screenHeight, screenWidth,mostPopular,"Most Popular"),
+                        fourIconCardWidget(screenHeight, screenWidth,topRated,"Top Technicians"),
+                        GridView.count(
+                          crossAxisCount: 2,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          childAspectRatio: 1,
+                          children: [
+                            businessCard(screenHeight, screenWidth, "PLANNING TO BOOST YOUR BUSINESS ?", Color(0xFF000080),"JOIN US"),
+                            businessCard(screenHeight, screenWidth, "MISSING OUR PREMIUM SERVICES ?", Color(0xFF526faa),"SUBSCRIBE NOW")
+                          ],
+                        ),
+                      ]
+                  ),
+                ) : Shimmer(
+                    duration: const Duration(seconds: 3),
+                    interval: const Duration(seconds: 5),
+                    enabled: true,
+                    color: Color(0xFF000080),
+                    direction: const ShimmerDirection.fromLTRB(),
+                    child: Container(
+                      height: screenHeight,
+
+                    )
                 )
-              ),
-              Container(
-                padding: EdgeInsets.all(5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Top Technicians", style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.bold),),
-                    Text("View All", style: GoogleFonts.lato(fontWeight: FontWeight.normal, fontSize: 20),)
-                  ],
-                ),
-              ),
-              Container(
-                  height: screenHeight/7,
-                  width: screenWidth,
-                  padding: EdgeInsets.all(5.0),
-                  child:  GridView.count(
-                    crossAxisCount: 4,
-                    children: List.generate(4, (index){
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Colors.transparent
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/${topRated[index]["icon"]}.png',
-                                      fit: BoxFit.cover),
-                                )
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Flexible(child:  Text("${topRated[index]["categoryName"]}",
-                            style: GoogleFonts.lato(fontSize: 15,color: Colors.black,fontWeight: FontWeight.bold),textAlign: TextAlign.center,))
-                        ],
-                      );
-                    }),
-                  )
-              ),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                childAspectRatio: 1,
-                children: [
-                  businessCard(screenHeight, screenWidth, "PLANNING TO BOOST YOUR BUSINESS ?", Color(0xFF000080),"JOIN US"),
-                  businessCard(screenHeight, screenWidth, "MISSING OUR PREMIUM SERVICES ?", Color(0xFF526faa),"SUBSCRIBE NOW")
-                ],
-              ),
-              ]
+              ],
+            )
           ),
         ),
       ),
