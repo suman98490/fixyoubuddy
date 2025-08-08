@@ -13,6 +13,7 @@ class SubCategories extends StatefulWidget {
 }
 
 class _SubCategoriesState extends State<SubCategories> {
+  bool isclickEnabled = true;
   var subCategories;
   var subCategories1 = [{"name" : "Electrician", "image_url" : ""},
     {"name" : "Plumber", "image_url" : ""},
@@ -34,38 +35,53 @@ class _SubCategoriesState extends State<SubCategories> {
     print(getSubCategoriesResponse);
 
   }
+  Future getTechnicians() async{
+    final TechniciansResponse = await get(Uri.parse("uri"));
+  }
 
   @override
   Widget build(BuildContext context) {
     subCategories = ModalRoute.of(context)!.settings.arguments;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     print("you are inside sub");
     print(subCategories);
 
     Container subCategorygrid(){
       return Container(
-        child: GridView.count(
-          childAspectRatio: 1,
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          crossAxisCount: 3,
-          children: List.generate(subCategories.length, (index){
-            return Column(
-              children: [
-                Expanded(child: Image.network(subCategories[index]["image_url"])),
-                SizedBox(height: 5.0),
-                Expanded(child:  Text("${subCategories[index]["name"]}",
-                style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.bold),),)
-              ],
-            );
-          }),
+        child: InkWell(
+          onTap: isclickEnabled ? () async =>{
+          setState(() {
+            isclickEnabled = false;
+          });
 
+          setState(() {
+            isclickEnabled = true;
+          });
+          } : null,
+          child: GridView.count(
+            childAspectRatio: 1,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            crossAxisCount: 4,
+            children: List.generate(subCategories['sub_categories'].length, (index){
+              return Column(
+                children: [
+                  Flexible(child: Image.network(subCategories["sub_categories"][index]["image_url"]),
+                  ),
+                  Flexible(child:  Text("${subCategories["sub_categories"][index]["name"]}",
+                  style: GoogleFonts.lato(fontSize: 20, fontWeight: FontWeight.bold),textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, softWrap: true, maxLines: 2,),)
+                ],
+              );
+            }),
+          ),
         ),
       );
     }
     return  Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,
-          title: Text("Sub Categories",
+          title: Text("${subCategories["name"]}",
           style: GoogleFonts.lato(fontSize: 20, color: Colors.white),),
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Color(0xFF000080),
@@ -84,19 +100,29 @@ class _SubCategoriesState extends State<SubCategories> {
               icon: Icon(Icons.logout, color: Colors.white),),
           ],
         ),
-        body: (subCategories == null || subCategories.isEmpty) ? Center(
+        body: (subCategories == null || subCategories["sub_categories"].isEmpty) ? Center(
           child: Column(
             children: [
               SizedBox(height: 10.0),
-              Text("No Sub Categories are available for the selected category", style: GoogleFonts.lato(fontSize: 25, fontWeight: FontWeight.bold, color: Color(0xFF000080)),)
+              Center(child: Text("No Sub Categories are available for the selected category", style: GoogleFonts.lato(fontSize: 25, fontWeight: FontWeight.bold, color: Color(0xFF000080)),))
             ],
           ),
         ) :  SafeArea(
         child: SingleChildScrollView(
           child: Column(
               children: [
-                SizedBox(height: 10,),
-                subCategorygrid()
+                SizedBox(height: 5.0),
+                Container(
+                  height: screenHeight/5,
+                  width: screenWidth,
+                  padding: EdgeInsets.fromLTRB(5.0, 0, 5.0, 0),
+                  child: Card(
+                    color: Color(0xFF000080),
+                  ),
+                ),
+                SizedBox(height: 10),
+                subCategorygrid(),
+
               ]
           ),
         )
@@ -116,6 +142,6 @@ class _SubCategoriesState extends State<SubCategories> {
           selectedItemColor: Color(0xFF000080),
           unselectedItemColor: Color(0xFF000080),
         )
-    );;
+    );
   }
 }

@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
    bool isappLoaded = false;
    List<dynamic> categoryList=[];
    Map<String, dynamic> subCategories = {};
+   bool istapEnabled = true;
    var categoryList1=[
      {"name":"Home Services","image_url":"https://cdn-icons-png.flaticon.com/128/10364/10364864.png"},
      {"name":"Cool Services","image_url":"https://cdn-icons-png.flaticon.com/128/9047/9047865.png"},
@@ -76,25 +77,30 @@ class _HomeState extends State<Home> {
      setState(() {
        subCategories = jsonDecode(getSubCategoriesResponse);
      });
+
    }
 
    Card categoryCard(double screenHeight, double screenWidth, String cardName, String imageName, int index){
      return  Card(
          color: Colors.white70,
          child: InkWell(
-           onTap: () async =>{
-            getSubCategories(index).whenComplete(
-                () async{
-                  if(subCategories != null){
-                    print("you are in get subcategories");
-                  print(subCategories["sub_categories"]);
-                  Navigator.pushNamed(context,'/subcategories',
-                  arguments: subCategories["sub_categories"]);
-                  }
+           onTap: istapEnabled ? () async =>{
+          setState(() {
+           istapEnabled = false;
+          }),
+             getSubCategories(index).whenComplete(
+                     () async{
+                   if(subCategories != null){
+                     print("you are in get subcategories");
+                     print(subCategories);
+                     Navigator.pushNamed(context,'/subcategories',
+                         arguments: subCategories);
+                      istapEnabled = true;
+                   }
 
-                }
-            ),
-           },
+                 }
+             ),
+           } : null,
            child: Container(
              height: screenHeight/8,
              width: screenWidth/2,

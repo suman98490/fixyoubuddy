@@ -1,0 +1,7 @@
+git add .
+git commit -m "Update message"
+git push origin main
+
+for flutter release app
+
+flutter build apk --release
